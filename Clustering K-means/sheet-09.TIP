@@ -1,0 +1,149 @@
+// Copyright 2016, University of Freiburg,
+// Chair of Algorithms and Data Structures.
+// Author: Hannah Bast <bast@cs.uni-freiburg.de>,
+//         Patrick Brosi <brosi@cs.uni-freiburg.de>.
+
+// NOTE: this file contains specifications and design suggestions in
+// pseudo-code. It is not supposed to be compilable in any language. The
+// specifications are mandatory, the design suggestions are not.
+// Matrix dimensions are a suggestion, you can, e.g., use an m x k matrix
+// instead of a k x n matrix as long as your algebra works out.
+
+// Class for k-means clustering, with vectors built from an inverted index.
+class KMeans:
+
+  // Build inverted index with BM25 scores from given file. Just re-use your
+  // method from ES8 (which, in turn, was just a slight extension of the method
+  // from ES2) or use the master solution as a starting point.
+  //
+  // TEST CASE:
+  //   read_from_file("example.txt", 1.75, 0.75)
+  // RESULT:
+  //   {'docum': [(1, 0.000), (2, 0.000), (3, 0.000)],
+  //    'first': [(1, 1.885)], 'second': [(2, 2.325)], 'third': [(3, 2.521)]}
+  read_from_file(String file_name, bm25_k, bm25_b)
+
+
+  // Build term-document matrix from inverted index. Again, just re-use your
+  // method from ES8. You can store the term document matrix as a member of this
+  // class and re-use it throughout the next methods where necessary.
+  // The columns of the TD-matrix should be L2 normalized using the method
+  // specified below!
+  //
+  // TEST CASE:
+  //   KMeans km
+  //   km.inverted_lists = {"blibb": [(1, 0.2), (2, 0.2), (3, 0.6)],
+  //                        "blabb": [(2, 0.4), (3, 0.1), (4, 0.8)]}
+  //   km.preprocess_vsm()
+  // RESULTING TD-MATRIX (sorted by rows):
+  //   [[0.000, 0.894, 0.164, 1.000],
+  //    [1.000, 0.447, 0.986, 0.000]]
+  void preprocess_vsm()
+
+
+  // Cluster into k clusters using k-means and return the k final centroids. Use
+  // the auxiliary functions below. In particular, make sure that you use
+  // matrix/vector operations wherever possible.
+  //
+  // No tests here. Test the auxiliary functions below.
+  // Verify your overall results against the results in the Wiki!
+  Matrix k_means(int k)
+
+
+  // Auxiliary functions for the k-means implementation. In the following, k is
+  // always the number of clusters, n is the number of documents, and m is the
+  // number of terms. The types "Matrix" and "Vector" are just placeholders for
+  // whatever data structure you use to store a matrix / vector.
+
+
+  // Compute an m x k matrix with the initial (random) centroids.
+  Matrix initialize_centroids(int k)
+
+
+  // Compute a k x n matrix such that the entry at i, j contains the distance
+  // between the i-th centroid and the j-th document. This should be done with a
+  // single matrix operation, see lecture slides.
+  //
+  // IMPLEMENTATION NOTE: for L2-normalized matrices, it is easier
+  // (and useful later on) to compute not dist, but dist^2 * 1/2 here.
+  // See slide 23. If you do it like this, and d_ij is a
+  // matrix entry at (i, j), you have to calculate sqrt(d_ij * 2) for every
+  // element in your matrix before testing it against the values below! In python,
+  // you can do it like this: res = numpy.sqrt(res * 2).
+  //
+  // TEST CASE:
+  //   KMeans km
+  //   Matrix docs = [[0.9806, 0.0995, 0.9991],
+  //                  [0.1961, 0.9950, 0.0425]]
+  //   Matrix centroids = [[0.5812, 0.6000],
+  //                       [0.8137, 0.8000]]
+  //   res = km.compute_distances(docs, centroids)
+  //
+  // RESULT:
+  //   [[0.736, 0.515, 0.877],
+  //    [0.714, 0.537, 0.856]]
+  Matrix compute_distances(Matrix documents, Matrix centroids)
+
+
+  // Assign each document to its closest centroid. Return a k x n matrix such
+  // that the entry at i, j is 1 if document j is closest to centroid i, and 0
+  // otherwise. Understand that the matrix must contain exactly one 1 in each
+  // column (n 1s altogether). Have a look at the numpy.argmin function to
+  // implement this efficiently without iterating over the matrix.
+  //
+  // TEST CASE:
+  //   KMeans km
+  //   dists = [[0.600, 0.800, 0.600],
+  //            [0.800, 0.600, 0.800]]
+  //   km.compute_assignment(dists)
+  //
+  // RESULT:
+  //   [[1.000, 0.000, 1.000],
+  //    [0.000, 1.000, 0.000]]
+  Matrix compute_assignment(Matrix distances)
+
+
+  // Compute an m x k matrix with new centroids. Each centroid should be
+  // the average of all the documents assigned to it in the given assignment.
+  // This can also be done with a single matrix operation. The result
+  // has to be normalized again.
+  //
+  // TEST CASE:
+  //  KMeans km
+  //  docs = [[1.000, 0.000, 1.000],
+  //          [0.000, 1.000, 0.000]]
+  //  assignment = [[0.000, 1.000, 0.000]
+  //                [0.000, 0.000, 1.000]
+  //                [1.000, 0.000, 0.000]]
+  //  km.compute_centroids(docs, assignment)
+  //
+  // RESULT:
+  //   [[0.000, 1.000, 1.000],
+  //    [1.000, 0.000, 0.000]]
+  Matrix compute_centroids(Matrix docs, Matrix assignment)
+
+
+  // L2-normalize a matrix along the columns. You can re-use your
+  // solution from ES 8 or just use the code from the master solution
+  // for ES 8.
+  //
+  // TEST CASE:
+  //   KMeans km
+  //   m = [[0.700, 0.400, 0.100],
+  //        [1.900, 0.500, 2.900]]
+  //   km.l2normalize_cols(m)
+  //
+  // RESULT:
+  //   [[0.346, 0.625, 0.034],
+  //    [0.938, 0.781, 0.999]]
+  Matrix l2normalize_cols(Matrix m):
+
+// Main program:
+//
+// 1. Arguments: <records> <k>
+// 2. Construct inverted index from given file
+// 3. Build normalized term-document matrix
+// 4. Run k-means with given k
+// 5. Print the top-10 terms of each cluster.
+
+void main

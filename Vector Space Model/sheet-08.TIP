@@ -1,0 +1,64 @@
+// Copyright 2016, University of Freiburg,
+// Chair of Algorithms and Data Structures.
+// Authors: Hannah Bast <bast@cs.uni-freiburg.de>,
+//          Patrick Brosi <brosi@cs.uni-freiburg.de>
+
+// NOTE: this exercise sheet asks you to extend your solution from
+//       ES 2 (or the master solution). The TIP-file from ES 2 still
+//       holds. The methods and tests specified there have
+//       to be implemented and working! Only additional or changed
+//       methods are listed below!
+
+// Class for a simple inverted index. Copy your code from sheet-02 and extend it
+// by VSM, following the explanations in the lecture.
+class InvertedIndex
+
+  // Compute the sparse term-document matrix using the inverted index build in
+  // the read_from_file method from ES 2. The td-matrix should be stored as a
+  // member of this class. For Exercise 2, add a boolean flag "l2normalize"
+  // that normalizes the matrix with respect to the L^2-norm. The L^2-norm for
+  // a column (x1, ..., xn) is given by sqrt(sum_i x_i^2). In the normalized
+  // matrix, the squares of the entries of a column should sum to 1. Then, add
+  // test case 2. Test case 1 should be run without normalization!
+  //
+  // NOTE: for the test, use .todense().tolist() to convert your sparse matrix into a
+  //       list for testing. You can sort() this list for reproducible results. The
+  //       row order will depend on the order you process your terms.
+  //
+  // TEST CASE 1 (without normalization):
+  //   InvertedIndex ii
+  //   ii.inverted_lists = {"bla": [(1, 0.2), (3, 0.6)], "blubb": [(2, 0.4), (3, 0.1), (4, 0.8)]}
+  //   ii.preprocess_vsm()
+  // RESULTING TD-MATRIX:
+  //   [[0.000, 0.400, 0.100, 0.800], [0.200, 0.000, 0.600, 0.000]]
+  //
+  // TEST CASE 2 (with normalization, careful: different ii.inverted lists!):
+  //   InvertedIndex ii
+  //   ii.inverted_lists = {"blibb": [(1, 0.2), (2, 0.2), (3, 0.6)], "blabb": [(2, 0.4), (3, 0.1), (4, 0.8)]}
+  //   ii.preprocess_vsm(l2normalize=True)
+  // RESULTING TD-MATRIX:
+  //   [[0.000, 0.894, 0.164, 1.000], [1.000, 0.447, 0.986, 0.000]]
+  //
+  void preproces_vsm()
+
+  // Process a query using the VSM. Return relevant documents sorted by their BM25-scores.
+  // If two or more keywords are equal (e.g. "bla" in query "bla blubb bla"), the score
+  // for the occurance of that word in a document should be counted as many times as the keyword
+  // is present in the query (test case 2 below checks this).
+  //
+  // TEST CASE 1: (same as test case 1 from ES 2)
+  //   InvertedIndex ii
+  //   ii.inverted_lists = {"bla": [(1, 0.2), (3, 0.6)], "blubb": [(2, 0.4), (3, 0.1), (4, 0.8)]}
+  //   ii.preprocess_vsm()
+  //   ii.process_query_vsm("bla blubb")
+  // RESULT:
+  //   [(4, 0.800), (3, 0.700), (2, 0.400), (1, 0.200)]
+  // TEST CASE 2:
+  //   InvertedIndex ii
+  //   ii.inverted_lists = {"bla": [(1, 0.2), (3, 0.6)], "blubb": [(2, 0.4), (3, 0.1), (4, 0.8)]}
+  //   ii.preprocess_vsm()
+  //   ii.process_query_vsm("bla blubb bla blubb")
+  // RESULT:
+  //   [(4, 1.600), (3, 1.400), (2, 0.800), (1, 0.400)]
+  //
+  void process_query_vsm()
